@@ -7,7 +7,7 @@ import "./libraries/Math.sol";
 import "./libraries/SafeERC20.sol";
 
 //solhint-disable not-rely-on-time
-contract StandardStake {
+contract SatoshiBankStake {
     using SafeERC20 for IERC20;
 
     /* ========== STATE VARIABLES ========== */
@@ -163,6 +163,12 @@ contract StandardStake {
 
     function transferOwnership(address newOwner) external onlyDistributor {
         _data.distributor = uint160(newOwner);
+    }
+
+    function withdrawRewards() external onlyDistributor {
+        require(_time.periodFinish > block.timestamp, "Rewards still active");
+        uint256 rewardBalance = rewardsToken.balanceOf(address(this));
+        rewardsToken.transfer(address(_data.distributor), rewardBalance);
     }
 
     /* ========== MODIFIERS ========== */

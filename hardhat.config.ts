@@ -23,7 +23,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "ropsten",
+  defaultNetwork: "mainnet",
   solidity: {
     version: "0.8.13",
     settings: {
@@ -39,6 +39,12 @@ const config: HardhatUserConfig = {
       forking: {
         url: process.env.ALCHEMY || "",
         blockNumber: 14615385
+      }
+    },
+    mainnet: {
+      url: process.env.ALCHEMY || "",
+      accounts: {
+        mnemonic: process.env.MNEMONIC_PROD !== undefined ? process.env.MNEMONIC_PROD : ''
       }
     },
     ropsten: {

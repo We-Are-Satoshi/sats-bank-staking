@@ -3,11 +3,11 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
-const WBTC = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
-const SATS = "0xa010e37405Eb57437a381DAAE88e5C3913D0796C";
-const OWNER = "0x1062B63F8F4b51363C748b8ABeCCD49A9d21fB85";
+const ROPSTEN_WBTC = "0x65058d7081FCdC3cd8727dbb7F8F9D52CefDd291";
+const ROPSTEN_SATS = "0xda16d170636fdf07428d9632cb5ea2a9c6097dc1";
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -17,18 +17,18 @@ async function main() {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
+  const signers: SignerWithAddress[] = await ethers.getSigners();
+
   // We get the contract to deploy
-  const Stake = await ethers.getContractFactory('SatoshiBankStake');
+  const Stake = await ethers.getContractFactory('StandardStake');
   const stake = await Stake.deploy(
-    OWNER,
-    WBTC,
-    SATS,
+    signers[0].address,
+    ROPSTEN_WBTC,
+    ROPSTEN_SATS,
     30
   );
 
   await stake.deployed();
-
-  console.log("Staking contract deployed to:", stake.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

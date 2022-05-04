@@ -27,7 +27,7 @@ describe("Staking", function () {
   
     await stake.deployed();
   
-    await token.connect(signers[0]).approve(stake.address, ethers.utils.parseEther('10000000'));
+    await token.connect(signers[0]).approve(stake.address, ethers.utils.parseEther('1000000000'));
     await token.connect(signers[1]).approve(stake.address, ethers.utils.parseEther('1000'));
     await token.connect(signers[2]).approve(stake.address, ethers.utils.parseEther('1000'));
     await token.connect(signers[3]).approve(stake.address, ethers.utils.parseEther('1000'));
@@ -49,6 +49,12 @@ describe("Staking", function () {
     console.log(await stake.getRewardForDuration());
     console.log(await stake.rewardPerToken());
 
+    // Increase by a month - a day
+    await ethers.provider.send("evm_increaseTime", [2628000 - 86400]);
+    await ethers.provider.send('evm_mine', []);
+
+    await stake.fundContract(ethers.utils.parseEther('100'))
+
     // Increase by a year
     await ethers.provider.send("evm_increaseTime", [2628000 * 12 + 1000]);
     await ethers.provider.send('evm_mine', []);
@@ -64,7 +70,7 @@ describe("Staking", function () {
     console.log("Address 4 has earned:", ethers.utils.formatEther(await stake.earned(signers[4].address)));
 
     // Test all rewards given out
-    expect(Math.round(addr1Earned + addr2Earned + addr3Earned + addr4Earned)).to.equal(10000000);
+    expect(Math.round(addr1Earned + addr2Earned + addr3Earned + addr4Earned)).to.equal(10000100);
 
     await stake.connect(signers[1]).exit();
     await stake.connect(signers[2]).exit();
