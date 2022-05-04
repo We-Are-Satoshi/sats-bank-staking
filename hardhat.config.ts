@@ -23,6 +23,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
+  defaultNetwork: "ropsten",
   solidity: {
     version: "0.8.13",
     settings: {
@@ -41,7 +42,7 @@ const config: HardhatUserConfig = {
       }
     },
     ropsten: {
-      url: process.env.ROPSTEN_URL || "",
+      url: process.env.ALCHEMY_ROPSTEN || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
