@@ -138,7 +138,7 @@ contract StandardStake {
         notifyRewardAmount(amount);
     }
 
-    function notifyRewardAmount(uint256 reward) private onlyDistributor updateReward(address(0)) {
+    function notifyRewardAmount(uint256 reward) public onlyDistributor updateReward(address(0)) {
         if (block.timestamp >= _time.periodFinish) {
             rewardRate = reward / _time.rewardsDuration;
         } else {
@@ -159,6 +159,10 @@ contract StandardStake {
         _time.periodFinish = uint64(block.timestamp) + _time.rewardsDuration;
 
         emit RewardAdded(reward);
+    }
+
+    function transferOwnership(address newOwner) external onlyDistributor {
+        _data.distributor = uint160(newOwner);
     }
 
     /* ========== MODIFIERS ========== */
