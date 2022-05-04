@@ -6,6 +6,9 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
+const ROPSTEN_WBTC = "0x65058d7081FCdC3cd8727dbb7F8F9D52CefDd291";
+const ROPSTEN_SATS = "0xda16d170636fdf07428d9632cb5ea2a9c6097dc1";
+
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
   // line interface.
@@ -16,44 +19,16 @@ async function main() {
 
   const signers: SignerWithAddress[] = await ethers.getSigners();
 
-  const Token = await ethers.getContractFactory('TestToken');
-  const token = await Token.deploy('1000000000000000000000000000');
-
-  await token.deployed();
-
-  await token.transfer(signers[1].address, ethers.utils.parseEther('1000'));
-  await token.transfer(signers[2].address, ethers.utils.parseEther('1000'));
-  await token.transfer(signers[3].address, ethers.utils.parseEther('1000'));
-  await token.transfer(signers[4].address, ethers.utils.parseEther('1000'));
-
   // We get the contract to deploy
   const Stake = await ethers.getContractFactory('StandardStake');
   const stake = await Stake.deploy(
     signers[0].address,
-    token.address,
-    token.address,
-    365
+    ROPSTEN_WBTC,
+    ROPSTEN_SATS,
+    30
   );
 
   await stake.deployed();
-
-  await token.connect(signers[0]).approve(stake.address, ethers.utils.parseEther('10000000'));
-  await token.connect(signers[1]).approve(stake.address, ethers.utils.parseEther('1000'));
-  await token.connect(signers[2]).approve(stake.address, ethers.utils.parseEther('1000'));
-  await token.connect(signers[3]).approve(stake.address, ethers.utils.parseEther('1000'));
-  await token.connect(signers[4]).approve(stake.address, ethers.utils.parseEther('1000'));
-
-  await stake.fundContract(ethers.utils.parseEther('10000000'));
-
-  console.log("Staking deployed to:", stake.address);
-  console.log("Staking has balance of:", await token.balanceOf(stake.address));
-
-  await stake.connect(signers[1]).stake(ethers.utils.parseEther('1000'));
-  await stake.connect(signers[2]).stake(ethers.utils.parseEther('1000'));
-  await stake.connect(signers[3]).stake(ethers.utils.parseEther('1000'));
-  await stake.connect(signers[4]).stake(ethers.utils.parseEther('1000'));
-
-  console.log("Staking has total staked:", ethers.utils.formatEther(await stake.totalSupply()));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
